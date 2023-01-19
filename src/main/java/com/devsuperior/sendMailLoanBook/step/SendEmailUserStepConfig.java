@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.devsuperior.sendMailLoanBook.domain.User;
+import com.devsuperior.sendMailLoanBook.domain.UserBookLoan;
 
 @Configuration
 public class SendEmailUserStepConfig {
@@ -21,12 +21,12 @@ public class SendEmailUserStepConfig {
 	private PlatformTransactionManager transactionManager;
 
 	@Bean
-	public Step sendEmailUserStep(ItemReader<User> readUsersWithLoansCloseToReturnReader,
-			ItemWriter<User> sendEmailRequestReturn, JobRepository jobRepository) {		
+	public Step sendEmailUserStep(ItemReader<UserBookLoan> readUsersWithLoansCloseToReturnReader,
+			ItemWriter<UserBookLoan> sendEmailRequestReturnWriter, JobRepository jobRepository) {		
 		return new StepBuilder("envioEmailClienteStep", jobRepository)
-				.<User, User>chunk(1, transactionManager)
+				.<UserBookLoan, UserBookLoan>chunk(1, transactionManager)
 				.reader(readUsersWithLoansCloseToReturnReader)
-				.writer(sendEmailRequestReturn)
+				.writer(sendEmailRequestReturnWriter)
 				.build();
 	}
 

@@ -41,4 +41,9 @@ public class UserBookLoan {
 	public void setLoan_date(Date loan_date) {
 		this.loan_date = loan_date;
 	}
+
+	@Override
+	public String toString() {
+		return "UserBookLoan [user=" + user + ", book=" + book + ", loan_date=" + loan_date + "]";
+	}
 }

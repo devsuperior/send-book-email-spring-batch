@@ -4,13 +4,13 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.devsuperior.sendMailLoanBook.domain.User;
+import com.devsuperior.sendMailLoanBook.domain.UserBookLoan;
 
 @Configuration
-public class SendEmailRequestReturnConfig {
+public class SendEmailRequestReturnWriterConfig {
 	
 	@Bean
-	public ItemWriter<User> sendEmailRequestReturn() {
+	public ItemWriter<UserBookLoan> sendEmailRequestReturn() {
 		return items -> items.forEach(System.out::println);
 	}
 
