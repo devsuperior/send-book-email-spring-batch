@@ -13,7 +13,7 @@ public class SendBookLoanNotificationJobConfig {
 
 	@Bean
 	public Job sendBookLoanNotificationJob(Step sendEmailUserStep, JobRepository jobRepository) {
-		return new JobBuilder("sendEmailUserStep", jobRepository)
+		return new JobBuilder("sendBookLoanNotificationJob", jobRepository)
 				.start(sendEmailUserStep)
 				.incrementer(new RunIdIncrementer())
 				.build();

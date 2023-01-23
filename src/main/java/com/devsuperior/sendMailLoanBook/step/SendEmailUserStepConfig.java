@@ -23,7 +23,7 @@ public class SendEmailUserStepConfig {
 	@Bean
 	public Step sendEmailUserStep(ItemReader<UserBookLoan> readUsersWithLoansCloseToReturnReader,
 			ItemWriter<UserBookLoan> sendEmailRequestReturnWriter, JobRepository jobRepository) {		
-		return new StepBuilder("envioEmailClienteStep", jobRepository)
+		return new StepBuilder("sendEmailUserStep", jobRepository)
 				.<UserBookLoan, UserBookLoan>chunk(1, transactionManager)
 				.reader(readUsersWithLoansCloseToReturnReader)
 				.writer(sendEmailRequestReturnWriter)

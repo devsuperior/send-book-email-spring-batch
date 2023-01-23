@@ -19,17 +19,23 @@ import com.devsuperior.sendMailLoanBook.domain.UserBookLoan;
 @Configuration
 public class ReadUsersWithLoansCloseToReturnReaderConfig {
 
+	int numDaysToNotifyReturn = 6;
+
 	@Bean
 	public ItemReader<UserBookLoan> readUsersWithLoansCloseToReturnReader(@Qualifier("appDS") DataSource dataSource) {
 
 		return new JdbcCursorItemReaderBuilder<UserBookLoan>().name("readUsersWithLoansCloseToReturnReader")
 				.dataSource(dataSource)
-				.sql("SELECT * FROM tb_user_book_loan " +
-				"INNER JOIN tb_user ON tb_user_book_loan.user_id = tb_user.id " +
-				"INNER JOIN tb_book ON tb_user_book_loan.book_id = tb_book.id " +
-				"WHERE DATE_ADD(loan_date, INTERVAL 6 DAY) = DATE(NOW());")
-				.rowMapper(rowMapper())
-				.build();
+				.sql("SELECT user.id as user_id, "
+						+ "user.name as user_name, "
+						+ "user.email as user_email, " 
+						+ "book.id as book_id, "
+						+ "book.name as book_name, "
+						+ "loan.loan_date "
+						+ "FROM tb_user_book_loan as loan " + "INNER JOIN tb_user as user ON loan.user_id = user.id "
+						+ "INNER JOIN tb_book as book ON loan.book_id = book.id "
+						+ "WHERE DATE_ADD(loan_date, INTERVAL " + numDaysToNotifyReturn + " DAY) = DATE(NOW());")
+				.rowMapper(rowMapper()).build();
 	}
 
 	private RowMapper<UserBookLoan> rowMapper() {
@@ -37,8 +43,11 @@ public class ReadUsersWithLoansCloseToReturnReaderConfig {
 
 			@Override
 			public UserBookLoan mapRow(ResultSet rs, int rowNum) throws SQLException {
-				User user = new User(rs.getInt("id"), rs.getString("name"), rs.getString("email"));
-				Book book = new Book(rs.getInt(6), rs.getString(7), rs.getString("description"), rs.getString("author"), rs.getString("category"));
+				User user = new User(rs.getInt("user_id"), rs.getString("user_name"), rs.getString("user_email"));
+				Book book = new Book();
+				book.setId(rs.getInt("book_id"));
+				book.setName(rs.getString("book_name"));
+				
 				UserBookLoan userBookLoan = new UserBookLoan(user, book, rs.getDate("loan_date"));
 				return userBookLoan;
 			}
