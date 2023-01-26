@@ -7,9 +7,10 @@ import java.util.Date;
 
 public final class GenerateBookReturnDate {
 
-	private static int numDaysToReturnBook = 7;
+	public static int numDaysToReturnBook = 7;
 	private static DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
 
+	// Gets the formatted return date of the book
 	public static String getDate(Date loan_date) {
 		Calendar calendar = dateToCalendar(loan_date);
 		calendar.add(Calendar.DATE, numDaysToReturnBook);

@@ -15,11 +15,13 @@ import org.springframework.jdbc.core.RowMapper;
 import com.devsuperior.sendMailLoanBook.domain.Book;
 import com.devsuperior.sendMailLoanBook.domain.User;
 import com.devsuperior.sendMailLoanBook.domain.UserBookLoan;
+import com.devsuperior.sendMailLoanBook.util.GenerateBookReturnDate;
 
 @Configuration
 public class ReadUsersWithLoansCloseToReturnReaderConfig {
 
-	int numDaysToNotifyReturn = 6;
+	// value to notify user is obtained by subtracting one day of number days to return book
+	int numDaysToNotifyReturn = GenerateBookReturnDate.numDaysToReturnBook - 1;
 
 	@Bean
 	public ItemReader<UserBookLoan> readUsersWithLoansCloseToReturnReader(@Qualifier("appDS") DataSource dataSource) {
@@ -32,7 +34,8 @@ public class ReadUsersWithLoansCloseToReturnReaderConfig {
 						+ "book.id as book_id, "
 						+ "book.name as book_name, "
 						+ "loan.loan_date "
-						+ "FROM tb_user_book_loan as loan " + "INNER JOIN tb_user as user ON loan.user_id = user.id "
+						+ "FROM tb_user_book_loan as loan " 
+						+ "INNER JOIN tb_user as user ON loan.user_id = user.id "
 						+ "INNER JOIN tb_book as book ON loan.book_id = book.id "
 						+ "WHERE DATE_ADD(loan_date, INTERVAL " + numDaysToNotifyReturn + " DAY) = DATE(NOW());")
 				.rowMapper(rowMapper()).build();

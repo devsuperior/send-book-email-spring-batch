@@ -28,15 +28,12 @@ public class SendEmailRequestReturnWriterConfig {
 
 	private void sendEmail(Mail email) {
 		LOG.info("Sending mail");
-		System.out.println(email);
-		
-		Request request = new Request();
-		
+		Request request = new Request();		
 		try {
 			request.setMethod(Method.POST);
 			request.setEndpoint("mail/send");
 			request.setBody(email.build());
-	//		LOG.info("Send email to: " + dto.getTo()); 
+			LOG.info("[WRITER STEP] Send email to: " + email.build());
 			Response response = sendGrid.api(request);
 			if (response.getStatusCode() >= 400 && response.getStatusCode() <= 500) {
 				LOG.error("Error sending email: " + response.getBody());
