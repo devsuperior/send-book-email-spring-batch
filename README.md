@@ -143,6 +143,64 @@ private void sendEmail(Mail email) {
 spring.sendgrid.api-key=KEY_SENDGRID
 ```
 
+#### Schedule sending email
+
+```java
+@Configuration
+public class QuartzConfig {
+
+	@Bean
+	public JobDetail quartzJobDetail() {
+		return JobBuilder.newJob(SendBookLoanNotificationScheduleJob.class).storeDurably().build();
+	}
+
+	@Bean
+	public Trigger jobTrigger() {
+		String exp = "0 51 18 * * ?";
+		return TriggerBuilder
+				.newTrigger()
+				.forJob(quartzJobDetail())
+				.startNow()
+				.withSchedule(CronScheduleBuilder.cronSchedule(exp))
+				.build();
+	}
+}
+```
+```java
+@Configuration
+public class SendBookLoanNotificationScheduleJob extends QuartzJobBean {
+	
+	@Autowired
+	private Job job;
+	
+	@Autowired
+	private JobExplorer jobExplorer;
+	
+	@Autowired
+	private JobLauncher jobLaucher;
+
+	@Override
+	protected void executeInternal(JobExecutionContext context) throws JobExecutionException {
+		JobParameters jobParameters = new JobParametersBuilder(this.jobExplorer).getNextJobParameters(this.job).toJobParameters();
+		try {
+			this.jobLaucher.run(this.job, jobParameters);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+}
+```
+```
+spring.batch.job.enabled=false
+```
+
+See all :
+- https://stackoverflow.com/questions/28928128/schedule-a-task-to-run-at-everyday-on-a-specific-time
+- http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/tutorial-lesson-06.html
+
+
+
 
 
 
